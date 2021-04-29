@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {% load static %}
+</head>
+<body>
+    <div class="container">
+        <form method="POST" action="{% url 'translate' %}">
+            {% csrf_token %}
+            <textarea name="original_text" id="original_text" rows="34" cols="100">{% block original_text %}{% endblock %}</textarea>
+            <div style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
+                <img id="load_image" width="50" src="{% static 'images/loading.png' %}" alt="">
+                <button id="translate_btn" type="button" onclick="btn_click()">Translate</button>
+            </div>
+            <textarea name="translated_text" id="translated" rows="34" cols="100"></textarea>
+        </form>
+    </div>
+    <style>
+        body {
+            width: 100%;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        form {
+            width: 100%;
+            height: 100%;
+        }
+        textarea {
+            resize: none;
+        }
+        .container, form {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .loading {
+            -webkit-animation:spin 4s linear infinite;
+            -moz-animation:spin 4s linear infinite;
+            animation:spin 4s linear infinite;
+        }
+        @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+        @-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+        @keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+    </style>
+<script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+<script>
+    let translate_btn = document.getElementById('translate_btn');
+    let original_text = document.getElementById('original_text');
+    let translated_text = document.getElementById('translated');
+    let load_image = document.getElementById('load_image');
+
+    function btn_click() {
+
+        load_image.classList.add('loading');
+
+        $.ajax({
+            type: "POST",
+            url: "/translate/",
+            data: {
+                "original_text": original_text.value,
+                "csrfmiddlewaretoken": "{{ csrf_token }}"
+            },
+            dataType: 'json',
+            success: function(data) {
+                translated_text.value = data.data;
+                load_image.classList.remove('loading');
+            }
+        })
+    }
+</script>
+</body>
+</html>
