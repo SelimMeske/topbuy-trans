@@ -1,6 +1,7 @@
-from google_trans_new import google_translator
+from googletrans import Translator
 import re
 from bs4 import BeautifulSoup
+import time
 
 example_text = ''
 
@@ -21,9 +22,18 @@ class Translator_Jomi:
             self.text = self.text.replace(i, clean_i)
     def translations(self):
         splited_text = self.text.splitlines()
-        translator = google_translator()
-
+        translator = Translator()
+        print("TRANSLATION IS STARTING !!!! \n")
+        print("TRANSLATION IS STARTING !!!! \n")
+        print("TRANSLATION IS STARTING !!!! \n")
+        print("TRANSLATION IS STARTING !!!! \n")
         for i in splited_text:
+
+            if not (i):
+                print('-------------------')
+                print('Skiped ' + i)
+                continue
+            print('Current ' + i)
             # Search for image
             search_for_image = re.search(r'<img.*/>', i, re.MULTILINE)
 
@@ -32,8 +42,9 @@ class Translator_Jomi:
 
             if search_for_image:
                 clean_image = i.replace(search_for_image.group(0), '')
-                translated = translator.translate(clean_image, lang_tgt='hr')
-                soup_trans = BeautifulSoup(translated, "html.parser")
+                print('\u001b[34mSection one\u001b[37m')
+                translated = translator.translate(clean_image, dest="hr")
+                soup_trans = BeautifulSoup(translated.text, "html.parser")
                 soup = BeautifulSoup(clean_image, "html.parser")
                 text_eng = soup.get_text()
                 text_hr = soup_trans.get_text()
@@ -41,18 +52,24 @@ class Translator_Jomi:
             elif search_for_shortcode:
                 is_box = re.search(r'\[box.*\[/box]', i, re.MULTILINE)
                 if is_box:
-                    i = i.replace('[/box]', '')
-                    remove_box = re.search(r'\[.*]', i, re.MULTILINE)
-                    clean_text_box = i.replace(remove_box.group(0), '')
-                    translated = translator.translate(clean_text_box, lang_tgt='hr')
-                    self.text = self.text.replace(clean_text_box, translated)
-                else:
-                    i = i.replace(search_for_shortcode.group(0), '')
-                    translated = translator.translate(i, lang_tgt='hr')
-                    self.text = self.text.replace(i, translated)
+                    print('\u001b[34mSection two current text is \u001b[37m' + i)
+                    remove_box_start = re.search(r'\[.*]', i, re.MULTILINE)
+                    remove_box_end = re.search(r'\[\/box]', i, re.MULTILINE)
+                    i = i.replace(remove_box_start.group(0), '')
+                    i = i.replace(remove_box_end.group(0), '')
+                    translated = translator.translate(i, dest="hr")
+                    self.text = self.text.replace(i, translated.text)
+                #else:
+                    #print('Section three')
+                    #i = i.replace(search_for_shortcode.group(0), '')
+                    #translated = translator.translate(i, dest="hr")
+                    #self.text = self.text.replace(i, translated.text)
             else:
-                translated = translator.translate(i, lang_tgt='hr')
-                self.text = self.text.replace(i, translated)
+                print('\u001b[34mSection four current text is \u001b[37m' + i)
+                translated = translator.translate(i, dest="hr")
+                self.text = self.text.replace(i, translated.text)
+                
 
-        self.text = self.text.replace('</ Ul>', '</ul>')
+        self.text = self.text.replace('</ ', '</')
+        self.text = self.text.replace('</Ul>', '</ul>')
         self.text = self.text.replace('<Ul>', '<ul>')

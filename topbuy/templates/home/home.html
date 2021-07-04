@@ -9,12 +9,19 @@
     <div class="container">
         <form method="POST" action="{% url 'translate' %}">
             {% csrf_token %}
-            <textarea name="original_text" id="original_text" rows="34" cols="100">{% block original_text %}{% endblock %}</textarea>
+            <div>
+                <h4>TEXT TO TRANSLATE</h4>
+                <textarea name="original_text" id="original_text" rows="34" cols="100">{% block original_text %}{% endblock %}</textarea>
+            </div>
+            
             <div style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
                 <img id="load_image" width="50" src="{% static 'images/loading.png' %}" alt="">
                 <button id="translate_btn" type="button" onclick="btn_click()">Translate</button>
             </div>
-            <textarea name="translated_text" id="translated" rows="34" cols="100"></textarea>
+            <div>
+                <h4>TRANSLATED TEXT</h4>
+                <textarea name="translated_text" id="translated" rows="34" cols="100"></textarea>
+            </div>
         </form>
     </div>
     <style>
@@ -23,6 +30,9 @@
             height: 100vh;
             margin: 0;
             padding: 0;
+            background: rgb(240, 240, 240);
+            font-family:Verdana, Geneva, Tahoma, sans-serif;
+            letter-spacing: 0.8px;
         }
         form {
             width: 100%;
@@ -30,6 +40,7 @@
         }
         textarea {
             resize: none;
+            border: none;
         }
         .container, form {
             width: 100%;
@@ -42,6 +53,14 @@
             -webkit-animation:spin 4s linear infinite;
             -moz-animation:spin 4s linear infinite;
             animation:spin 4s linear infinite;
+        }
+        #translate_btn {
+            background: rgb(255, 153, 0);
+            cursor: pointer;
+            border: none;
+            padding: 8px 16px;
+            color: white;
+            margin: 0px 40px;
         }
         @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
         @-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }

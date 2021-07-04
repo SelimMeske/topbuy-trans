@@ -10,6 +10,8 @@ def home(request):
 def translate(request):
 
     if request.method == 'POST':
+        print(request.POST['original_text'])
+
         ts = Translator_Jomi(request.POST['original_text'])
 
         ts.clean_a()
@@ -17,7 +19,6 @@ def translate(request):
         ts.translations()
 
         translated = ts.text
-        original = request.POST['original_text']
 
         return JsonResponse({'data': translated})
 
