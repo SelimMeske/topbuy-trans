@@ -12,7 +12,7 @@ def translate(request):
     if request.method == 'POST':
         print(request.POST['original_text'])
 
-        ts = Translator_Jomi(request.POST['original_text'])
+        ts = Translator_Jomi(request.POST['original_text'], "hr")
 
         ts.clean_a()
         ts.clean_strong()
