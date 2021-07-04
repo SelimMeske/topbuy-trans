@@ -11,8 +11,10 @@
             {% csrf_token %}
             <div>
                 <h4>TEXT TO TRANSLATE</h4>
-                <textarea name="original_text" id="original_text" rows="34" cols="100">{% block original_text %}{% endblock %}</textarea>
+                <textarea oninput="countChars()" name="original_text" id="original_text" rows="34" cols="100">{% block original_text %}{% endblock %}</textarea>
+                <p><span>Character count: </span><span class="length"></span></p>
             </div>
+            
             
             <div style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
                 <img id="load_image" width="50" src="{% static 'images/loading.png' %}" alt="">
@@ -72,6 +74,21 @@
     let original_text = document.getElementById('original_text');
     let translated_text = document.getElementById('translated');
     let load_image = document.getElementById('load_image');
+    let length = document.querySelector('.length');
+
+    function countChars() {
+        let textColor = ""
+        let charCount = original_text.value.length;
+        if(charCount > 16000) {
+            textColor = "red";
+        }else if(charCount < 16000 && charCount > 13000){
+            textColor = "blue";
+        }else {
+            textColor = "green";
+        }
+        length.innerText = original_text.value.length;
+        length.style.color = textColor;
+    }
 
     function btn_click() {
 

@@ -24,10 +24,10 @@ class Translator_Jomi:
             clean_i = clean_i.replace(find_a_start.group(0), '')
             self.text = self.text.replace(i, clean_i)
     def sort_text_with_box(self, data):
+        
         boxed_text = re.search(r'\[box.*\[/box]', data, re.MULTILINE)
         boxed_text = boxed_text.group(0)
         rest = data.replace(boxed_text, "")
-
         #Strip the box around the text
         remove_box_start = re.search(r'\[box.*?]', boxed_text, re.MULTILINE)
         remove_box_start = remove_box_start.group(0)
@@ -36,15 +36,19 @@ class Translator_Jomi:
         boxed_text = boxed_text.replace(remove_box_start, '')
         boxed_text = boxed_text.replace(remove_box_end, '')
 
-        translated_rest = self.translator.translate(rest, dest=self.language)
-        #sleep
-        self.sleep()
         translated_boxed_text = self.translator.translate(boxed_text, dest=self.language)
         translated_boxed_text = remove_box_start + translated_boxed_text.text + '[/box]'
-        return data.replace(boxed_text, translated_boxed_text).replace(rest, translated_rest.text)
+
+        if rest:
+            translated_rest = self.translator.translate(rest, dest=self.language)
+            #sleep
+            self.sleep()
+            return data.replace(boxed_text, translated_boxed_text).replace(rest, translated_rest.text)
+        else:
+            return translated_boxed_text
 
     def sleep(self):
-        time.sleep(5)
+        time.sleep(0)
         print("\u001b[36mGood night. Sleeping...\u001b[37m")
 
     def translations(self):
@@ -76,12 +80,16 @@ class Translator_Jomi:
                 text_eng = soup.get_text()
                 text_hr = soup_trans.get_text()
                 self.text = self.text.replace(text_eng, text_hr)
+                #sleep
+                self.sleep()
             elif search_for_shortcode:
                 is_box = re.search(r'\[box.*\[/box]', i, re.MULTILINE)
                 if is_box:
                     print('\u001b[34mSection two current text is \u001b[37m' + i)
                     translated_content = self.sort_text_with_box(i)
                     self.text = self.text.replace(i, translated_content)
+                    #sleep
+                    self.sleep()
                 #else:
                     #print('Section three')
                     #i = i.replace(search_for_shortcode.group(0), '')
@@ -91,7 +99,8 @@ class Translator_Jomi:
                 print('\u001b[34mSection four current text is \u001b[37m' + i)
                 translated = self.translator.translate(i, dest=self.language)
                 self.text = self.text.replace(i, translated.text)
-                
+                #sleep
+                self.sleep()
 
         self.text = self.text.replace('</ ', '</')
         self.text = self.text.replace('</Ul>', '</ul>')
